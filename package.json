@@ -1,0 +1,37 @@
+{
+  "name": "@twocatmoon/react-template-helpers",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Branching and iterative logic helpers for React, to help make your templates cleaner.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jordanranson/react-template-helpers.git"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "Jordan Ranson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jordanranson/react-template-helpers/issues"
+  },
+  "homepage": "https://github.com/jordanranson/react-template-helpers#readme",
+  "devDependencies": {
+    "@babel/core": "^7.13.8",
+    "@babel/preset-env": "^7.13.9",
+    "@babel/preset-react": "^7.12.13",
+    "babel-loader": "^8.2.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "webpack": "^5.24.3",
+    "webpack-cli": "^4.5.0"
+  },
+  "peerDependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
+}
