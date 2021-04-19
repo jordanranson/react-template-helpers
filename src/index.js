@@ -100,7 +100,9 @@ export function For (collection) {
   return (fn) => {
     let children
 
-    if (Array.isArray(collection)) {
+    if (!collection) {
+      return <React.Fragment></React.Fragment>
+    } else if (Array.isArray(collection)) {
       children = collection.map((item, i) => {
         return fn(item, i, {
           isFirst: i === 0,
