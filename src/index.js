@@ -16,18 +16,18 @@ import React from 'react'
  *   return (
  *     <div>
  *       {
- *         If(state === 'foo')(
+ *         If(state === 'foo', () => (
  *           <div>Foo</div>
- *         )
- *         .ElseIf(state === 'bar')(
+ *         ))
+ *         .ElseIf(state === 'bar', () => (
  *           <div>Bar</div>
- *         )
- *         .ElseIf(state === 'baz')(
+ *         ))
+ *         .ElseIf(state === 'baz', () => (
  *           <div>Baz</div>
- *         )
- *         .Else(
+ *         ))
+ *         .Else(() => (
  *           <div>Other</div>
- *         )
+ *         ))
  *         .EndIf()
  *       }
  *     </div>
@@ -35,24 +35,22 @@ import React from 'react'
  * })
  */
 
-export function If (condition) {
+export function If (condition, children) {
   let result = <React.Fragment></React.Fragment>
   let lastCondition = condition
 
   const response = {
-    ElseIf (elseCondition) {
-      return (children) => {
-        if (!lastCondition && elseCondition) {
-          result = children
-        }
-        lastCondition = elseCondition
-        return response
+    ElseIf (elseCondition, children) {
+      if (!lastCondition && elseCondition) {
+        result = children()
       }
+      lastCondition = elseCondition
+      return response
     },
 
     Else (children) {
       if (!lastCondition) {
-        result = children
+        result = children()
       }
       return {
         EndIf: response.EndIf
@@ -64,12 +62,10 @@ export function If (condition) {
     }
   }
 
-  return (children) => {
-    if (condition) {
-      result = children
-    }
-    return response
+  if (condition) {
+    result = children()
   }
+  return response
 }
 
 /**
@@ -87,7 +83,7 @@ export function If (condition) {
  *   return (
  *     <div>
  *       {
- *         For(collection)((value, key, { isFirst, isLast, isEven }) => (
+ *         For(collection, (value, key, { isFirst, isLast, isEven }) => (
  *           <div key={key}>{key}: {value}</div>
  *         ))
  *       }
@@ -96,33 +92,31 @@ export function If (condition) {
  * })
  */
 
-export function For (collection) {
-  return (fn) => {
-    let children
+export function For (collection, fn) {
+  let children
 
-    if (!collection) {
-      return <React.Fragment></React.Fragment>
-    } else if (Array.isArray(collection)) {
-      children = collection.map((item, i) => {
-        return fn(item, i, {
-          isFirst: i === 0,
-          isLast: i === collection.length - 1,
-          isEven: i % 2 === 0,
-          isNth: (k) => i % k === 0
-        })
+  if (!collection) {
+    throw new Error(`Collection passed to 'For' must be of type Array or Object and must be iterable.`)
+  } else if (Array.isArray(collection)) {
+    children = collection.map((item, i) => {
+      return fn(item, i, {
+        isFirst: i === 0,
+        isLast: i === collection.length - 1,
+        isEven: i % 2 === 0,
+        isNth: (k) => i % k === 0
       })
-    } else {
-      const keys = Object.keys(collection)
-      children = keys.map((key, i) => {
-        return fn(collection[key], key, {
-          isFirst: i === 0,
-          isLast: i === keys.length - 1,
-          isEven: i % 2 === 0,
-          isNth: (k) => i % k === 0
-        })
+    })
+  } else {
+    const keys = Object.keys(collection)
+    children = keys.map((key, i) => {
+      return fn(collection[key], key, {
+        isFirst: i === 0,
+        isLast: i === keys.length - 1,
+        isEven: i % 2 === 0,
+        isNth: (k) => i % k === 0
       })
-    }
-
-    return <React.Fragment>{children}</React.Fragment>
+    })
   }
+
+  return <React.Fragment>{children}</React.Fragment>
 }
