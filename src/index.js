@@ -37,19 +37,24 @@ import React from 'react'
 
 export function If (condition, children) {
   let result = <React.Fragment></React.Fragment>
-  let lastCondition = condition
+  let shouldContinue = true
+
+  if (condition) {
+    result = children()
+    shouldContinue = false
+  }
 
   const response = {
     ElseIf (elseCondition, children) {
-      if (!lastCondition && elseCondition) {
+      if (shouldContinue && elseCondition) {
         result = children()
+        shouldContinue = false
       }
-      lastCondition = elseCondition
       return response
     },
 
     Else (children) {
-      if (!lastCondition) {
+      if (shouldContinue) {
         result = children()
       }
       return {
@@ -62,9 +67,6 @@ export function If (condition, children) {
     }
   }
 
-  if (condition) {
-    result = children()
-  }
   return response
 }
 
@@ -92,7 +94,7 @@ export function If (condition, children) {
  * })
  */
 
-export function For (collection, fn) {
+export function For (collection, fn, _returnRawArray) {
   let children
 
   if (!collection) {
@@ -118,5 +120,6 @@ export function For (collection, fn) {
     })
   }
 
+  if (_returnRawArray) return children
   return <React.Fragment>{children}</React.Fragment>
 }
